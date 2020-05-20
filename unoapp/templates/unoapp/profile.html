@@ -1,0 +1,151 @@
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<style>
+
+th,td{
+  /*padding: 20px;*/
+  text-align: center;
+}
+
+th{
+	font-weight: bold;
+}
+td{
+	font-weight: 100;
+}
+
+.highlights{
+	text-align: center;
+}
+
+.container-fluid{
+	width: 90%;
+}
+
+.ok{
+	position:relative;
+    overflow:auto;
+    width: 90%;
+    align-self: center;
+}
+
+/* rank name score oldrate newrate delta
+	10   40   20     10      10     10
+  */
+
+body {
+  background-image: url('back.webp');
+}
+
+
+table{
+	
+	width: 100%;
+
+}
+
+</style>
+</head>
+
+<body>
+<div style="text-align: center;padding-top: 5px ">
+<h2 ><b> {{ name }} </b> </h2>
+</div>
+
+<table class="table table-hover">
+	<thead class="thead-dark">
+	    <tr>
+	        <th>Name</th>
+	        <th>Rating</th>
+	        <th>Max. Rating</th>
+	        <th>Wins</th>
+	        <th>Max. Consecutive Wins</th>
+	        <th>Avg. Score</th>
+	        <th>Max. Score</th>
+	        <th>Sum of Score</th>
+	        <th>Score in Last Match</th>
+	    </tr>
+	</thead>	
+	
+	<tr> 
+		
+		{% if rating >= 1650 %}
+        <td style="color: red; font-weight: bold">{{ name }}</td>
+        {% elif rating >= 1600 %}
+		<td style="color: orange; font-weight: bold">{{ name }}</td>
+        {% elif rating >= 1500 %}
+		<td style="color: blue; font-weight: bold">{{ name }}</td>
+        {% elif rating >= 1400 %}
+        <td style="color: green; font-weight: bold">{{ name }}</td>
+        {% else %}
+		<td style="color: #5d5d5d; font-weight: bold">{{ name }}</td>
+        {% endif %}
+   
+        <td>{{ rating }}</td>
+        <td>{{ maxrating }}</td>
+        <td>{{ wins }}</td>
+        <td>{{ conswins }}</td>
+        <td>{{ avg }}</td>
+        <td>{{ maxscore }}</td>
+        <td>{{ sum }}</td>
+        <td>{{ lastmatch}}</td>
+     
+    </tr>
+    
+
+</table>
+
+<hr>
+<br>
+<br>
+<hr>
+
+<div class="container-fluid" >
+
+<table class = "table table-hover">
+	<thead class="thead-dark">
+	    <tr>
+	        <th width="10%">index</th>
+	        <th width="30%">Game</th>
+	        <th width="10%">Score</th>
+	        <th width="10%">Avg.</th>
+	      	<th width="10%">Rank</th>
+	        <th width="20%">Rating</th>
+	        <th width="10%">Δ</th>
+	    </tr>
+	</thead>
+	{% for game in games reversed %}
+			
+		    <tr> 
+		    	<td> {{forloop.counter}} </td>
+		    	<td>Game {{forloop.revcounter}}</td>
+		        <td>{{ game.score }}</td>
+		        <td>{{ game.avg }}</td>
+		        <td>{{ game.rank }}</td>
+		        <td>{{ game.old_rating }} → {{ game.new_rating }} </td>
+		        {% if game.delta > 0 %}
+		        <td style="color: green">+{{ game.delta }}</td>
+		        {% elif game.delta < 0 %}
+		        <td style="color: red">{{ game.delta }}</td>
+		        {% else %}
+		        <td>{{ game.delta }}</td>
+		        {% endif %}
+		       <!--  {% if p.delta > 0 %}
+		        <td style="color: green">+{{ p.delta }}</td>
+		        {% elif p.delta < 0 %}
+		        <td style="color: red">{{ p.delta }}</td>
+		        {% else %}
+		        <td>{{ p.delta }}</td>
+		        {% endif %} -->
+
+		    </tr>
+	{% endfor %}
+</table>
+</div>
+
+<!-- <a href="/unoapp/newgame.html">new game</a> -->
+</body>

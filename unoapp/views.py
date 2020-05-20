@@ -150,6 +150,12 @@ def calcmaxrating():
 				maxx[names[game[i].name]] = game[i].new_rating
 	return maxx	
 
+profile_maxx = calcmax()
+profile_wins = calcwins()
+profile_maxrating = calcmaxrating()
+profile_ranks = getRanks()
+profile_conswins = calcconsecutivewins(profile_ranks)
+
 def index(request):
 	template = loader.get_template('unoapp/index.html')
 	m_maxwins = 0
@@ -158,11 +164,11 @@ def index(request):
 	m_maxsum = 0
 
 	profiles = []
-	maxx = calcmax()
-	wins = calcwins()
-	maxrating = calcmaxrating()
-	ranks = getRanks()
-	conswins = calcconsecutivewins(ranks)
+	maxx =  profile_maxx
+	wins = profile_wins
+	maxrating = profile_maxrating
+	ranks = profile_ranks
+	conswins = profile_conswins
 
 
 	for i in range(4):
@@ -240,6 +246,46 @@ def index(request):
 	}
 	return HttpResponse(template.render(context,request))
 
+def profile(request,user_id):
+	template = loader.get_template('unoapp/profile.html')
+	index = int(user_id)
+
+	profiles = []
+	maxx =  profile_maxx
+	wins = profile_wins
+	maxrating = profile_maxrating
+	ranks = profile_ranks
+	conswins = profile_conswins
+
+	games = []
+	for i in range(len(ranks[index])) :
+		game = {
+			'rank' : ranks[index][i],
+			'old_rating' : rating['indivisual'][index][i],
+			'new_rating' : rating['indivisual'][index][i+1],
+			'score' : scores['scores'][index][i],
+			'delta' : rating['indivisual'][index][i+1] - rating['indivisual'][index][i],
+			'avg' : avg['average'][index][i]
+		}
+		games.append(game)
+
+	i = index
+	player = {
+		'name' : names[i],
+		'rating' : rating['indivisual'][i][len(rating['indivisual'][i])-1],
+		'avg'	: round(avg['average'][i][len(avg['average'][i])-1],2),
+		'sum' : scores['sum'][i][len(scores['sum'][i])-1],
+		'wins' : wins[i],
+		'conswins' : conswins[i],
+		'maxscore' : maxx[i],
+		'maxrating' : maxrating[i],
+		'lastmatch' : scores['scores'][i][len(scores['scores'][i])-1],
+		'games' : games
+	}
+
+
+	return HttpResponse(template.render(player,request))
+
 def newGame(request):
 	Daddy = request.GET['Daddy'] # u_name is the name of the input tag
 	Mummy = request.GET['Mummy']
@@ -249,6 +295,9 @@ def newGame(request):
 		return
 
 	print("all ok upto here")
+
+
+
 	
 
 

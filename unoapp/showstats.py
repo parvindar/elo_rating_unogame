@@ -8,24 +8,37 @@ SK = "Mummy"
 PS = "Parvindar"
 SS = "Ricky"
 
+names = {
+	0 : "Daddy",
+	1 : "Mummy",
+	2 : "Parvindar",
+	3 : "Ricky",
+	"Daddy" : 0,
+	"Mummy" : 1,
+	"Parvindar" : 2,
+	"Ricky" : 3
+}
+
+
 class User(object):
 
-	def __init__(self,score,rank, old_rating, name='', official_new_rating=0):
+	def __init__(self,score,rank, old_rating,avg=0 ,name='', official_new_rating=0):
 		self.score = int(score)
 		self.rank = float(rank)
 		self.old_rating = int(old_rating)
 		self.seed = 1.0
 		self.name = str(name)
 		self.new_rating = 0
+		self.avg = avg
         # official_new_rating: used for validating result
 		self.official_new_rating = int(official_new_rating)
 
 class RatingCalculator(object):
 
     def __init__(self, users):
-        self.user_list = []
-        for user in users:
-            self.user_list.append(User(user.score,user.rank, user.old_rating, user.name, user.new_rating))
+        self.user_list = users
+        # for user in users:
+        #     self.user_list.append(User(user.score,user.rank, user.old_rating, user.name, user.new_rating,user.avg))
 
     def cal_p(self, user_a, user_b):
         return 1.0 / (1.0 + pow(10, (user_b.old_rating - user_a.old_rating) / 400.0))
@@ -70,9 +83,17 @@ class RatingCalculator(object):
         for user in self.user_list:
             user.delta += inc
 
-        while mod > 0 :
-        	self.user_list[mod].delta -= 1
-        	mod-=1
+        # while mod > 0 :
+        # 	self.user_list[mod].delta -= 1
+        # 	mod-=1
+
+        self.user_list = sorted(self.user_list,key = lambda x:x.avg,reverse=False)
+        for i in range(mod):
+        	self.user_list[i].delta -= 1
+
+
+
+
 
 
 
@@ -94,16 +115,51 @@ class RatingCalculator(object):
 
 results = db.getScores()
 
+
+def showAverage():
+	y1 = []
+	y2 = []
+	y3 = []
+	y4 = []
+	x = []
+	for i in range(len(results)):
+		x.append(i+1)
+		y1.append(results[i][1])
+		y2.append(results[i][2])
+		y3.append(results[i][3])
+		y4.append(results[i][4])
+
+	for i in range(1,len(y1)):
+		y1[i] = round(float((y1[i-1]*i)+y1[i])/(i+1),2)
+
+	for i in range(1,len(y2)):
+		y2[i] = round(float((y2[i-1]*i)+y2[i])/(i+1),2)
+
+	for i in range(1,len(y1)):
+		y3[i] = round(float((y3[i-1]*i)+y3[i])/(i+1),2)
+
+	for i in range(1,len(y4)):
+		y4[i] = round(float((y4[i-1]*i)+y4[i])/(i+1),2)
+
+	res = {
+		'average' : [y1,y2,y3,y4],
+		'x' : x
+	}
+	return res
+
+
 def calcRating():
 	games = []
+	averages = showAverage()
+	avg = averages['average']
 
 	old_rating = [0,1500,1500,1500,1500]
 	for i in range(len(results)):
 		players = []
-		players.append(User(results[i][1],1,old_rating[1],DS))
-		players.append(User(results[i][2],1,old_rating[2],SK))
-		players.append(User(results[i][3],1,old_rating[3],PS))
-		players.append(User(results[i][4],1,old_rating[4],SS))
+		players.append(User(results[i][1],1,old_rating[1],avg[0][i],DS))
+		players.append(User(results[i][2],1,old_rating[2],avg[1][i],SK))
+		players.append(User(results[i][3],1,old_rating[3],avg[2][i],PS))
+		players.append(User(results[i][4],1,old_rating[4],avg[3][i],SS))
 		players = sorted(players, key=lambda x: x.score, reverse=True)
 
 		for j in range(1,len(players)):
@@ -137,7 +193,7 @@ def calcRating():
 	y2 = [1500]
 	y3 = [1500]
 	y4 = [1500]
-	x = [0]
+	x  = [0]
 	for i in range(len(games)) :
 		print(i)
 		x.append(i+1)
@@ -156,6 +212,7 @@ def calcRating():
 	res = {
 		'games' : games,
 		'indivisual': [y1,y2,y3,y4],
+		'averages' : averages,
 		'x' : x
 	}
 	return res
@@ -230,36 +287,6 @@ def showScores():
 	# plt.show()
 
 
-def showAverage():
-	y1 = []
-	y2 = []
-	y3 = []
-	y4 = []
-	x = []
-	for i in range(len(results)):
-		x.append(i+1)
-		y1.append(results[i][1])
-		y2.append(results[i][2])
-		y3.append(results[i][3])
-		y4.append(results[i][4])
-
-	for i in range(1,len(y1)):
-		y1[i] = round(float((y1[i-1]*i)+y1[i])/(i+1),2)
-
-	for i in range(1,len(y2)):
-		y2[i] = round(float((y2[i-1]*i)+y2[i])/(i+1),2)
-
-	for i in range(1,len(y1)):
-		y3[i] = round(float((y3[i-1]*i)+y3[i])/(i+1),2)
-
-	for i in range(1,len(y4)):
-		y4[i] = round(float((y4[i-1]*i)+y4[i])/(i+1),2)
-
-	res = {
-		'average' : [y1,y2,y3,y4],
-		'x' : x
-	}
-	return res
 	# plt.plot(x,y1,label = DS,marker="o",markersize=4)
 	# plt.plot(x,y2,label = SK,marker="o",markersize=4)
 	# plt.plot(x,y3,label = PS,marker="o",markersize=4)
