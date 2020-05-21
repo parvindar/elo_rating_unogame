@@ -2,10 +2,13 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.template import loader
 from unoapp import showstats as data
+from unoapp import insertScore
 from django.views.generic import TemplateView
 from chartjs.views.lines import BaseLineChartView
+from .forms import scoreForm
 import json
 
 rating = data.calcRating()
@@ -158,6 +161,7 @@ profile_conswins = calcconsecutivewins(profile_ranks)
 
 def index(request):
 	template = loader.get_template('unoapp/index.html')
+
 	m_maxwins = 0
 	m_maxscore = 0
 	m_maxrating = 1500
@@ -287,14 +291,28 @@ def profile(request,user_id):
 	return HttpResponse(template.render(player,request))
 
 def newGame(request):
-	Daddy = request.GET['Daddy'] # u_name is the name of the input tag
-	Mummy = request.GET['Mummy']
-	Parvindar = request.GET['Parvindar']
-	Ricky = request.GET['Ricky']
-	if Daddy==None or Mummy==None or Parvindar==None or Ricky==None :
-		return
+	# if this is a POST request we need to process the form data
+	if request.method == 'POST':
+		form = scoreForm(request.POST)
+		if form.is_valid():
+			newscores = [0,0,0,0]
+			newscores[0] = int(form.cleaned_data['Daddy'])
+			newscores[1] = int(form.cleaned_data['Mummy'])
+			newscores[2] = int(form.cleaned_data['Parvindar'])
+			newscores[3] = int(form.cleaned_data['Ricky'])
+			insertScore.insertScores(newscores)
+			data.refreshstats()
+			global rating,scores,avg
+			rating = data.calcRating()
+			scores = data.showScores()
+			avg = data.showAverage() 
+			return HttpResponseRedirect('/unoapp')
 
-	print("all ok upto here")
+    # if a GET (or any other method) we'll create a blank form
+	else:
+		form = scoreForm()
+
+		return render(request, 'unoapp/newgame.html', {'form': form})
 
 
 

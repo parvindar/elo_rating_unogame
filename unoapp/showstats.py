@@ -263,6 +263,11 @@ def showScores():
 		'x' : x
 	}
 	return res
+
+def refreshstats():
+	global results
+	results = db.getScores()
+	print("refreshstats called")
 	# plt.plot(x,y1,label = "Daddy",marker="o",markersize=4)
 	# plt.plot(x,y2,label = "Mummy",marker="o",markersize=4)
 	# plt.plot(x,y3,label = "Parvindar",marker="o",markersize=4)
