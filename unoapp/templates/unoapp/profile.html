@@ -59,27 +59,27 @@ table{
 <table class="table table-hover">
 	<thead class="thead-dark">
 	    <tr>
-	        <th>Name</th>
-	        <th>Rating</th>
-	        <th>Max. Rating</th>
-	        <th>Wins</th>
-	        <th>Max. Consecutive Wins</th>
-	        <th>Avg. Score</th>
-	        <th>Max. Score</th>
-	        <th>Sum of Score</th>
-	        <th>Score in Last Match</th>
+	        <th width="20%" >Name</th>
+	        <th width="10%" >Rating</th>
+	        <th width="10%" >Max. Rating</th>
+	        <th width="10%" >Wins</th>
+	        <th width="10%"  style="font-size: 11px">Max. Consecutive<br>Wins</th>
+	        <th width="10%" >Avg. Score</th>
+	        <th width="10%" >Max. Score</th>
+	        <th width="10%" >Sum of Score</th>
+	        <th width="10%" style="font-size: 11px" >Score in Last<br> Match</th>
 	    </tr>
 	</thead>	
 	
 	<tr> 
 		
-		{% if rating >= 1650 %}
+		{% if rating >= 1600 %}
         <td style="color: red; font-weight: bold">{{ name }}</td>
-        {% elif rating >= 1600 %}
+        {% elif rating >= 1550 %}
 		<td style="color: orange; font-weight: bold">{{ name }}</td>
         {% elif rating >= 1500 %}
 		<td style="color: blue; font-weight: bold">{{ name }}</td>
-        {% elif rating >= 1400 %}
+        {% elif rating >= 1450 %}
         <td style="color: green; font-weight: bold">{{ name }}</td>
         {% else %}
 		<td style="color: #5d5d5d; font-weight: bold">{{ name }}</td>
@@ -146,6 +146,8 @@ table{
 	{% endfor %}
 </table>
 </div>
+<hr>
+<br>
 
 <!-- <a href="/unoapp/newgame.html">new game</a> -->
 </body>

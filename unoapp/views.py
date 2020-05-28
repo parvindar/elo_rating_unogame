@@ -13,7 +13,7 @@ import json
 
 rating = data.calcRating()
 scores = data.showScores()
-avg = data.showAverage() 
+avg = rating['averages']
 
 
 class RatingChartJSONView(BaseLineChartView):
@@ -159,6 +159,14 @@ profile_maxrating = calcmaxrating()
 profile_ranks = getRanks()
 profile_conswins = calcconsecutivewins(profile_ranks)
 
+def calc_extras():
+	global profile_maxx,profile_wins,profile_maxrating,profile_ranks,profile_conswins
+	profile_maxx = calcmax()
+	profile_wins = calcwins()
+	profile_maxrating = calcmaxrating()
+	profile_ranks = getRanks()
+	profile_conswins = calcconsecutivewins(profile_ranks)	
+
 def index(request):
 	template = loader.get_template('unoapp/index.html')
 
@@ -252,7 +260,7 @@ def index(request):
 
 def profile(request,user_id):
 	template = loader.get_template('unoapp/profile.html')
-	index = int(user_id)
+	index = int(names[user_id])
 
 	profiles = []
 	maxx =  profile_maxx
@@ -286,7 +294,7 @@ def profile(request,user_id):
 		'lastmatch' : scores['scores'][i][len(scores['scores'][i])-1],
 		'games' : games
 	}
-
+	
 
 	return HttpResponse(template.render(player,request))
 
@@ -305,7 +313,8 @@ def newGame(request):
 			global rating,scores,avg
 			rating = data.calcRating()
 			scores = data.showScores()
-			avg = data.showAverage() 
+			avg = rating['averages']
+			calc_extras()
 			return HttpResponseRedirect('/unoapp')
 
     # if a GET (or any other method) we'll create a blank form

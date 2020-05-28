@@ -74,7 +74,7 @@ class RatingCalculator(object):
         sum_delta = 0
         for user in self.user_list:
             user.delta = int(
-                (self.cal_rating(self.user_list, math.sqrt(user.rank * user.seed), user) - user.old_rating) / 2.0)
+                (self.cal_rating(self.user_list, math.sqrt(user.rank * user.seed), user) - user.old_rating) / 4)
             sum_delta += user.delta
 
         # Calculate first inc
@@ -209,10 +209,23 @@ def calcRating():
 				y4.append(p.new_rating)
 			# print(games[i][j].rank," ",games[i][j].name ," ",games[i][j].score," ",games[i][j].old_rating," ",games[i][j].new_rating," ",games[i][j].delta)
 
+	indivisual_rating = [y1,y2,y3,y4]
+	rating_avgs = []
+	for rate in indivisual_rating :
+		rate_avg = [rate[0]]
+		for i in range(1,len(rate)):
+			rate_avg.append(round(((rate_avg[i-1]*i)+rate[i])/(i+1),2))
+		rating_avgs.append(rate_avg)
+
+	
+
+
+
 	res = {
 		'games' : games,
 		'indivisual': [y1,y2,y3,y4],
 		'averages' : averages,
+		'rating_avgs' : rating_avgs,
 		'x' : x
 	}
 	return res

@@ -74,30 +74,30 @@ table{
 <table class="table table-hover">
 	<thead class="thead-dark">
 	    <tr>
-	        <th>Name</th>
-	        <th>Rating</th>
-	        <th>Max. Rating</th>
-	        <th>Wins</th>
-	        <th>Max. Consecutive Wins</th>
-	        <th>Avg. Score</th>
-	        <th>Max. Score</th>
-	        <th>Sum of Score</th>
-	        <th>Score in Last Match</th>
+	        <th width="20%" >Name</th>
+	        <th width="10%" >Rating</th>
+	        <th width="10%" >Max. Rating</th>
+	        <th width="10%" >Wins</th>
+	        <th width="10%"  style="font-size: 11px">Max. Consecutive<br>Wins</th>
+	        <th width="10%" >Avg. Score</th>
+	        <th width="10%" >Max. Score</th>
+	        <th width="10%" >Sum of Score</th>
+	        <th width="10%" style="font-size: 11px" >Score in Last<br> Match</th>
 	    </tr>
 	</thead>	
 	{% for p in profiles %}
 	<tr> 
 		
-		{% if p.rating >= 1650 %}
-        <td ><a href="{% url 'profile' user_id=forloop.counter0 %}" style="color: red; font-weight: bold; display: block; ">{{p.name}}</a></td>
-        {% elif p.rating >= 1600 %}
-		<td ><a href="{% url 'profile' user_id=forloop.counter0 %}" style="color: orange; font-weight: bold;display: block;">{{p.name}}</a></td>
+		{% if p.rating >= 1600 %}
+        <td ><a href="{% url 'profile' user_id=p.name %}" style="color: red; font-weight: bold;  ">{{p.name}}</a></td>
+        {% elif p.rating >= 1550 %}
+		<td ><a href="{% url 'profile' user_id=p.name %}" style="color: orange; font-weight: bold;">{{p.name}}</a></td>
         {% elif p.rating >= 1500 %}
-		<td ><a href="{% url 'profile' user_id=forloop.counter0 %}" style="color: blue; font-weight: bold;display: block;">{{p.name}}</a></td>
-        {% elif p.rating >= 1400 %}
-        <td ><a href="{% url 'profile' user_id=forloop.counter0 %}" style="color: green; font-weight: bold;display: block;">{{p.name}}</a></td>
+		<td ><a href="{% url 'profile' user_id=p.name %}" style="color: blue; font-weight: bold;">{{p.name}}</a></td>
+        {% elif p.rating >= 1450 %}
+        <td ><a href="{% url 'profile' user_id=p.name %}" style="color: green; font-weight: bold;">{{p.name}}</a></td>
         {% else %}
-		<td ><a href="{% url 'profile' user_id=forloop.counter0 %}" style="color: #5d5d5d; font-weight: bold;display: block;">{{p.name}}</a></td>
+		<td ><a href="{% url 'profile' user_id=p.name %}" style="color: #5d5d5d; font-weight: bold;">{{p.name}}</a></td>
         {% endif %}
    
         <td>{{ p.rating }}</td>
@@ -113,6 +113,36 @@ table{
     {% endfor %}
 
 </table>
+<hr>
+
+{% load staticfiles %}
+<h2 style="text-align: center; background-color: #BDC3C7">Ratings</h2>
+
+<div><canvas id="ratingChart" width="100%" height="35"></canvas></div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+<script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+<script type="text/javascript">
+    $.get('{% url "rating_line_chart_json" %}', function(data) {
+
+    	for( i in data['datasets'])
+    	{
+    		data['datasets'][i]['lineTension']=0.2;
+    		data['datasets'][i]['fill']=false;
+    	}
+
+    	data['datasets'][2]['borderColor']="#0000ff";
+    	data['datasets'][2]['pointBackgroundColor']="#0000ff";
+    	data['datasets'][0]['borderColor']="#006400";
+    	data['datasets'][0]['pointBackgroundColor']="#006400";
+        var ctx = $("#ratingChart").get(0).getContext("2d");
+        new Chart(ctx, {
+            type: 'line',data: data
+
+        });
+    });
+</script>
+
 
 <hr>
 <br>
@@ -122,7 +152,7 @@ table{
 <table class = "table table-hover">
 	<tr>
 {% for p in profiles %}
-<td><a class = "my" href="{% url 'profile' user_id=forloop.counter0 %}">{{p.name}}</a></td>
+<td><a class = "my" href="{% url 'profile' user_id=p.name %}">{{p.name}}</a></td>
 {% endfor %}
 <tr>
 </table>
@@ -276,7 +306,7 @@ table{
 <br>
 <br>
 
-{% load staticfiles %}
+<!-- {% load staticfiles %}
 <h2 style="text-align: center; background-color: #BDC3C7">Ratings</h2>
 
 <div><canvas id="ratingChart" width="100%" height="35"></canvas></div>
@@ -305,7 +335,9 @@ table{
 </script>
 <hr>
 <br>
-<br>
+<br> -->
+
+
 <h2 style="text-align: center; background-color: #BDC3C7">Average Scores</h2>
 
 <div><canvas id="avgChart" width="100%" height="35"></canvas></div>
